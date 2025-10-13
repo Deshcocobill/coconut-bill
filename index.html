@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sri Vijaya Durga Coconut Traders</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: #f8f9fa;
+      padding: 15px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .screen { display: none; padding: 20px; }
+    .active { display: block !important; }
+
+    /* Login Screen */
+    .login-box {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #2c7a2c;
+    }
+    .input-group {
+      margin: 15px 0;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .btn {
+      background: #2c7a2c;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .btn:hover { background: #236123; }
+    .error { color: #e53e3e; margin-top: 10px; }
+
+    /* Main App */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #ccc;
+    }
+    .header h1 {
+      font-size: 24px;
+      color: #2c7a2c;
+    }
+    .header p {
+      font-size: 16px;
+      color: #555;
+    }
+
+    /* Form */
+    .form-group {
+      margin: 15px 0;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .btn-secondary {
+      background: #4299e1;
+    }
+    .btn-secondary:hover {
+      background: #3182ce;
+    }
+    .btn-warning {
+      background: #dd6b20;
+    }
+    .btn-warning:hover {
+      background: #c05621;
+    }
+    .btn-whatsapp {
+      background: #25D366;
+    }
+    .btn-whatsapp:hover {
+      background: #128C7E;
+    }
+
+    /* Invoice */
+    .invoice {
+      background: white;
+      padding: 15px;
+      border: 1px solid #eee;
+      margin: 20px 0;
+      display: none;
+    }
+    .invoice.active {
+      display: block;
+    }
+
+    /* History */
+    .search-tabs {
+      display: flex;
+      margin: 15px 0;
+      gap: 5px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: #e2e8f0;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .tab-btn.active-tab {
+      background: #2c7a2c;
+      color: white;
+    }
+    .search-form {
+      margin: 15px 0;
+    }
+    .range-inputs {
+      display: flex;
+      gap: 10px;
+    }
+    .range-inputs input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .results {
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .result-item {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    /* PRINT STYLES FOR A6 */
+    @media print {
+      @page {
+        size: A6 portrait;
+        margin: 0;
+      }
+      body * {
+        visibility: hidden;
+      }
+      .invoice, .invoice * {
+        visibility: visible;
+      }
+      .invoice {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 8px;
+        font-size: 10pt;
+        line-height: 1.2;
+      }
+      .btn {
+        display: none !important;
+      }
+      .screen {
+        display: none !important;
+      }
+      .container {
+        padding: 0;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="screen active">
+      <div class="login-box">
+        <h2>🔒 Login</h2>
+        <div class="input-group">
+          <label for="userId">User ID</label>
+          <input type="text" id="userId" placeholder="Enter User ID">
+        </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter Password">
+        </div>
+        <button class="btn" onclick="login()">LOGIN</button>
+        <div id="loginError" class="error"></div>
+      </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="mainApp" class="screen">
+      <div class="header">
+        <h1>SRI VIJAYA DURGA COCONUT TRADERS</h1>
+        <p>Ph: 9848195955 | Matsyapuri</p>
+      </div>
+
+      <!-- Billing Form -->
+      <div id="billingForm">
+        <div class="form-group">
+          <label for="vno">V.NO.</label>
+          <input type="text" id="vno" placeholder="e.g., 001">
+        </div>
+        <div class="form-group">
+          <label for="customerName">Name</label>
+          <input type="text" id="customerName" placeholder="Customer Name">
+        </div>
+        <div class="form-group">
+          <label for="totalNuts">Total Coconuts</label>
+          <input type="number" id="totalNuts" placeholder="e.g., 5670">
+        </div>
+        <div class="form-group">
+          <label for="priceEach">Price Each (₹)</label>
+          <input type="number" id="priceEach" step="0.01" placeholder="e.g., 10.75">
+        </div>
+        <div class="form-group">
+          <label for="billDate">Date</label>
+          <input type="date" id="billDate">
+        </div>
+        <div class="btn-group">
+          <button class="btn" onclick="calculateBill()">Calculate</button>
+          <button class="btn btn-secondary" onclick="showHistory()">View History</button>
+        </div>
+      </div>
+
+      <!-- Invoice Display -->
+      <div id="invoiceDisplay" class="invoice"></div>
+
+      <!-- History Screen -->
+      <div id="historyScreen" class="screen">
+        <h3>🔍 Bill Search</h3>
+        <div class="search-tabs">
+          <button class="tab-btn active-tab" onclick="switchSearchTab('name')">By Name</button>
+          <button class="tab-btn" onclick="switchSearchTab('range')">By Range</button>
+          <button class="tab-btn" onclick="switchSearchTab('vno')">By V.NO.</button>
+        </div>
+
+        <div id="searchByName" class="search-form active-search">
+          <input type="text" id="searchNameInput" placeholder="Enter client name">
+          <button class="btn" onclick="searchByName()">Search</button>
+        </div>
+
+        <div id="searchByRange" class="search-form" style="display:none;">
+          <div class="range-inputs">
+            <input type="number" id="fromVno" placeholder="From V.NO.">
+            <input type="number" id="toVno" placeholder="To V.NO.">
+          </div>
+          <button class="btn" onclick="searchByRange()">Show Range</button>
+        </div>
+
+        <div id="searchByVno" class="search-form" style="display:none;">
+          <input type="text" id="singleVnoInput" placeholder="Enter Voucher No.">
+          <button class="btn" onclick="searchBySingleVno()">Search</button>
+        </div>
+
+        <div id="historyResults" class="results"></div>
+        <button class="btn btn-warning" onclick="backToBilling()">← Back to Billing</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== PREDEFINED USERS (Edit these as needed) =====
+    const validUsers = {
+      "farmer1": "pass123",
+      "partner1": "coconut456",
+      "admin": "durga789"
+    };
+
+    // ===== LOGIN FUNCTION =====
+    function login() {
+      const userId = document.getElementById('userId').value.trim();
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('loginError');
+
+      if (validUsers[userId] && validUsers[userId] === password) {
+        document.getElementById('loginScreen').classList.remove('active');
+        document.getElementById('mainApp').classList.add('active');
+        document.getElementById('billDate').valueAsDate = new Date();
+        errorDiv.textContent = '';
+      } else {
+        errorDiv.textContent = 'Invalid User ID or Password';
+      }
+    }
+
+    // ===== WHATSAPP SHARE FUNCTION =====
+    function shareOnWhatsApp(name, vno, date, totalNuts, rejectedNuts, remainingNuts, priceEach, grossAmount, tax, laborCharges, netPayable) {
+      const formatNum = (num) => parseFloat(num).toLocaleString('en-IN', {minimumFractionDigits: 2});
+      
+      const message = 
+`SRI VIJAYA DURGA COCONUT TRADERS
+Ph: 9848195955 | Matsyapuri
+
+Customer: ${name}
+V.NO.: ${vno} Date: ${date}
+
+Total Nuts Received : ${totalNuts.toLocaleString()}
+Less (2.2%)         : ${rejectedNuts.toLocaleString()}
+Remaining Nuts      : ${remainingNuts.toLocaleString()}
+Price Each          : ₹${priceEach}
+
+Gross Amount        : ₹${formatNum(grossAmount)}
+Less: Tax (1%)      : ₹${formatNum(tax)}
+Labor Charges (11%) : ₹${formatNum(laborCharges)}
+
+NET PAYABLE         : ₹${formatNum(netPayable)}
+
+✅ Payment to be made within 7 days
+Thank you! Visit Again 🌴`;
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+    }
+
+    // ===== CALCULATE BILL =====
+    function calculateBill() {
+      const vno = document.getElementById('vno').value.trim();
+      const name = document.getElementById('customerName').value.trim();
+      const totalNuts = parseFloat(document.getElementById('totalNuts').value);
+      const priceEach = parseFloat(document.getElementById('priceEach').value);
+      const dateInput = document.getElementById('billDate').value;
+
+      if (!vno || !name || isNaN(totalNuts) || isNaN(priceEach) || !dateInput) {
+        alert('Please fill all fields correctly');
+        return;
+      }
+
+      const rejectedNuts = Math.round(totalNuts * 0.022);
+      const remainingNuts = totalNuts - rejectedNuts;
+      const grossAmount = remainingNuts * priceEach;
+      const tax = grossAmount * 0.01;
+      const afterTax = grossAmount - tax;
+      const laborCharges = totalNuts * 0.11;
+      const netPayable = afterTax - laborCharges;
+
+      const dateObj = new Date(dateInput);
+      const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
+
+      const invoiceHTML = `
+        <div style="text-align:center; margin-bottom:5px;">
+          <h2 style="color:#2c7a2c; font-size:16px; margin:0;">SRI VIJAYA DURGA COCONUT TRADERS</h2>
+          <p style="font-size:12px; color:#555; margin:2px 0;">Ph: 9848195955 | Matsyapuri</p>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:12px; margin:8px 0;">
+          <span style="font-weight:bold;">Customer: ${name}</span>
+          <span style="font-weight:bold;">V.NO.: ${vno} Date: ${formattedDate}</span>
+        </div>
+
+        <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+        <div style="font-size:12px; line-height:1.6;">
+          <div style="display:flex; justify-content:space-between;">
+            <span>Total Nuts Received</span>
+            <span>: ${Math.round(totalNuts).toLocaleString()}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Less (2.2%)</span>
+            <span>: ${rejectedNuts.toLocaleString()}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Remaining Nuts</span>
+            <span>: ${Math.round(remainingNuts).toLocaleString()}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Price Each</span>
+            <span>: ₹${priceEach.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+        <div style="font-size:12px; line-height:1.6;">
+          <div style="display:flex; justify-content:space-between;">
+            <span>Gross Amount</span>
+            <span>: ₹${grossAmount.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Less: Tax (1%)</span>
+            <span>: ₹${tax.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Labor Charges (11%)</span>
+            <span>: ₹${laborCharges.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+          </div>
+        </div>
+
+        <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; margin:5px 0;">
+          <span>NET PAYABLE</span>
+          <span>: ₹${netPayable.toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+        </div>
+
+        <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+        <div style="text-align:center; font-size:10px; color:#555; margin:8px 0;">
+          <span style="font-size:10px;">✅ Payment to be made within 7 days</span><br>
+          <span style="font-size:10px;">Thank you! Visit Again 🌴</span>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button class="btn" onclick="window.print()" style="width:100%; padding:12px; font-size:14px; background:#2c7a2c; color:white; border:none; border-radius:5px; cursor:pointer;">
+            🖨️ Print Invoice
+          </button>
+          <button class="btn" onclick="saveBill('${vno}', '${name}', '${formattedDate}', ${netPayable})" style="width:100%; padding:12px; font-size:14px; background:#4299e1; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px;">
+            💾 Save Bill
+          </button>
+          <button class="btn btn-whatsapp" onclick="shareOnWhatsApp('${name}', '${vno}', '${formattedDate}', ${Math.round(totalNuts)}, ${rejectedNuts}, ${Math.round(remainingNuts)}, ${priceEach.toFixed(2)}, ${grossAmount.toFixed(2)}, ${tax.toFixed(2)}, ${laborCharges.toFixed(2)}, ${netPayable.toFixed(2)})" 
+                  style="width:100%; padding:12px; font-size:14px; background:#25D366; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px;">
+            💬 Share on WhatsApp
+          </button>
+        </div>
+      `;
+
+      document.getElementById('invoiceDisplay').innerHTML = invoiceHTML;
+      document.getElementById('invoiceDisplay').classList.add('active');
+
+      const billData = {
+        vno,
+        name,
+        date: formattedDate,
+        totalNuts: Math.round(totalNuts),
+        priceEach: priceEach.toFixed(2),
+        rejectedNuts,
+        remainingNuts: Math.round(remainingNuts),
+        grossAmount: grossAmount.toFixed(2),
+        tax: tax.toFixed(2),
+        laborCharges: laborCharges.toFixed(2),
+        netPayable: netPayable.toFixed(2)
+      };
+      saveToHistory(billData);
+    }
+
+    // ===== SAVE BILL =====
+    function saveToHistory(billData) {
+      let history = JSON.parse(localStorage.getItem('coconutBills') || '[]');
+      const exists = history.find(bill => bill.vno === billData.vno);
+      if (!exists) {
+        history.push(billData);
+        localStorage.setItem('coconutBills', JSON.stringify(history));
+      }
+    }
+
+    function saveBill(vno, name, date, amount) {
+      alert('Bill saved successfully!');
+    }
+
+    // ===== HISTORY FUNCTIONS =====
+    function showHistory() {
+      document.getElementById('billingForm').style.display = 'none';
+      document.getElementById('invoiceDisplay').classList.remove('active');
+      document.getElementById('historyScreen').classList.add('active');
+    }
+
+    function backToBilling() {
+      document.getElementById('historyScreen').classList.remove('active');
+      document.getElementById('billingForm').style.display = 'block';
+    }
+
+    function switchSearchTab(type) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+      event.target.classList.add('active-tab');
+
+      document.getElementById('searchByName').style.display = 'none';
+      document.getElementById('searchByRange').style.display = 'none';
+      document.getElementById('searchByVno').style.display = 'none';
+
+      if (type === 'name') {
+        document.getElementById('searchByName').style.display = 'block';
+      } else if (type === 'range') {
+        document.getElementById('searchByRange').style.display = 'block';
+      } else {
+        document.getElementById('searchByVno').style.display = 'block';
+      }
+      document.getElementById('historyResults').innerHTML = '';
+    }
+
+    function searchByName() {
+      const searchTerm = document.getElementById('searchNameInput').value.trim().toLowerCase();
+      if (!searchTerm) {
+        alert('Please enter a name');
+        return;
+      }
+
+      const history = JSON.parse(localStorage.getItem('coconutBills') || '[]');
+      const results = history.filter(bill => 
+        bill.name.toLowerCase().includes(searchTerm)
+      );
+
+      displaySearchResults(results);
+    }
+
+    function searchByRange() {
+      const from = parseInt(document.getElementById('fromVno').value);
+      const to = parseInt(document.getElementById('toVno').value);
+      if (isNaN(from) || isNaN(to)) {
+        alert('Please enter valid V.NO. range');
+        return;
+      }
+
+      const history = JSON.parse(localStorage.getItem('coconutBills') || '[]');
+      const results = history.filter(bill => {
+        const vnoNum = parseInt(bill.vno);
+        return vnoNum >= from && vnoNum <= to;
+      }).sort((a, b) => parseInt(a.vno) - parseInt(b.vno));
+
+      let html = '<h4>Range Preview</h4><ol>';
+      results.forEach(bill => {
+        html += `<li>${bill.name} (${bill.vno}) = ₹${parseFloat(bill.netPayable).toLocaleString('en-IN', {minimumFractionDigits: 2})}</li>`;
+      });
+      html += '</ol>';
+      if (results.length === 0) html = '<p>No bills found in this range.</p>';
+      
+      document.getElementById('historyResults').innerHTML = html;
+    }
+
+    function searchBySingleVno() {
+      const vno = document.getElementById('singleVnoInput').value.trim();
+      if (!vno) {
+        alert('Please enter a Voucher Number');
+        return;
+      }
+
+      const history = JSON.parse(localStorage.getItem('coconutBills') || '[]');
+      const bill = history.find(b => b.vno === vno);
+      
+      if (bill) {
+        const invoiceHTML = `
+          <div style="text-align:center; margin-bottom:5px;">
+            <h2 style="color:#2c7a2c; font-size:16px; margin:0;">SRI VIJAYA DURGA COCONUT TRADERS</h2>
+            <p style="font-size:12px; color:#555; margin:2px 0;">Ph: 9848195955 | Matsyapuri</p>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin:8px 0;">
+            <span style="font-weight:bold;">Customer: ${bill.name}</span>
+            <span style="font-weight:bold;">V.NO.: ${bill.vno} Date: ${bill.date}</span>
+          </div>
+
+          <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+          <div style="font-size:12px; line-height:1.6;">
+            <div style="display:flex; justify-content:space-between;">
+              <span>Total Nuts Received</span>
+              <span>: ${bill.totalNuts.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Less (2.2%)</span>
+              <span>: ${bill.rejectedNuts.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Remaining Nuts</span>
+              <span>: ${bill.remainingNuts.toLocaleString()}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Price Each</span>
+              <span>: ₹${bill.priceEach}</span>
+            </div>
+          </div>
+
+          <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+          <div style="font-size:12px; line-height:1.6;">
+            <div style="display:flex; justify-content:space-between;">
+              <span>Gross Amount</span>
+              <span>: ₹${parseFloat(bill.grossAmount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Less: Tax (1%)</span>
+              <span>: ₹${parseFloat(bill.tax).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span>Labor Charges (11%)</span>
+              <span>: ₹${parseFloat(bill.laborCharges).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+            </div>
+          </div>
+
+          <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+          <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; margin:5px 0;">
+            <span>NET PAYABLE</span>
+            <span>: ₹${parseFloat(bill.netPayable).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>
+          </div>
+
+          <hr style="margin:5px 0; border-top:1px solid #ccc;">
+
+          <div style="text-align:center; font-size:10px; color:#555; margin:8px 0;">
+            <span style="font-size:10px;">✅ Payment to be made within 7 days</span><br>
+            <span style="font-size:10px;">Thank you! Visit Again 🌴</span>
+          </div>
+
+          <div style="margin-top:20px;">
+            <button class="btn" onclick="window.print()" style="width:100%; padding:12px; font-size:14px; background:#2c7a2c; color:white; border:none; border-radius:5px; cursor:pointer;">
+              🖨️ Print Invoice
+            </button>
+            <button class="btn btn-whatsapp" onclick="shareOnWhatsApp('${bill.name}', '${bill.vno}', '${bill.date}', ${bill.totalNuts}, ${bill.rejectedNuts}, ${bill.remainingNuts}, ${bill.priceEach}, ${bill.grossAmount}, ${bill.tax}, ${bill.laborCharges}, ${bill.netPayable})" 
+                    style="width:100%; padding:12px; font-size:14px; background:#25D366; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px;">
+              💬 Share on WhatsApp
+            </button>
+            <button class="btn btn-warning" onclick="backToHistorySearch()" style="width:100%; padding:12px; font-size:14px; background:#dd6b20; color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px;">
+              ← Back to Search
+            </button>
+          </div>
+        `;
+        document.getElementById('historyResults').innerHTML = invoiceHTML;
+      } else {
+        document.getElementById('historyResults').innerHTML = '<p style="color:red;">Bill not found!</p>';
+      }
+    }
+
+    function backToHistorySearch() {
+      document.getElementById('historyResults').innerHTML = '';
+    }
+
+    function displaySearchResults(results) {
+      if (results.length === 0) {
+        document.getElementById('historyResults').innerHTML = '<p>No bills found.</p>';
+        return;
+      }
+
+      let html = `
+        <div style="font-weight:bold; border-bottom:2px solid #ccc; padding-bottom:8px; font-size:12px; margin-bottom:10px;">
+          <span style="display:inline-block; width:25%;">Date</span>
+          <span style="display:inline-block; width:15%;">V.NO.</span>
+          <span style="display:inline-block; width:40%;">Name</span>
+          <span style="display:inline-block; width:20%;">Amount</span>
+        </div>
+      `;
+      results.forEach(bill => {
+        html += `
+          <div style="font-size:12px; margin:5px 0; padding:5px 0; border-bottom:1px solid #eee;">
+            <span style="display:inline-block; width:25%;">${bill.date}</span>
+            <span style="display:inline-block; width:15%;">${bill.vno}</span>
+            <span style="display:inline-block; width:40%;">${bill.name}</span>
+            <span style="display:inline-block; width:20%;">₹${parseFloat(bill.netPayable).toLocaleString('en-IN')}</span>
+          </div>
+        `;
+      });
+      document.getElementById('historyResults').innerHTML = html;
+    }
+
+    window.onload = function() {
+      const today = new Date().toISOString().split('T')[0];
+      if (document.getElementById('billDate')) {
+        document.getElementById('billDate').value = today;
+      }
+    };
+  </script>
+</body>
+</html>
